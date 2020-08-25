@@ -1,16 +1,15 @@
-def check_row(board, num , position):
+def is_valid(board, num , position):
+    #check row
     for i in range(len(board)):
         if board[position[0]][i] == num and position[1] != i:
             return False
     
-
-def check_column(board, num , position):
+    #check column
     for i in range(len(board)):
         if board[i][position[1]] == num and position[0] != i:
             return False
-    
 
-def check_subgrid(board, num , position):
+    #check subgrid
     box_x = position[1] // 3
     box_y = position[0] // 3
 
@@ -18,11 +17,6 @@ def check_subgrid(board, num , position):
         for j in range(box_x * 3, box_x * 3 + 3):
             if board[i][j] == num and (i,j) != position:
                 return False
-
-def is_valid(board, num , position):
-    check_row(board, num , position)
-    check_column(board, num , position)
-    check_subgrid(board, num , position)
     return True
 
 def find_empty_space(board):
@@ -31,14 +25,31 @@ def find_empty_space(board):
             if board[i][j] == 0:
                 return (i,j)
     return None
-            
+
+def solve(board):
+    find = find_empty_space(board)
+    if not find:
+        return True
+    else:
+        row, column = find
+
+    for i in range(1,10): #check each value to see if its a valid solution in the cell
+        if is_valid(board, i, (row,column)):
+            board[row][column] = i
+
+            if solve(board):
+                return True
+
+            board[row][column] = 0
+
+    return False
 
 def print_board(board):
     for i in range(len(board)):
         if i % 3 == 0 and i != 0:
             print("- - - - - - - - - - - -  ")
 
-        for j in range(len(board[0])):
+        for j in range(len(board)):
             if j % 3 == 0 and j != 0:
                 print(" | ", end=  "")
 
@@ -47,15 +58,26 @@ def print_board(board):
             else:
                 print(str(board[i][j]) + " ", end="")
                 
-board = [[7,8,0,4,0,0,1,2,0],
-      [6,0,0,0,7,5,0,0,9],
-      [0,0,0,6,0,1,0,7,8],
-      [0,0,7,0,4,0,2,6,0],
-      [0,0,1,0,5,0,9,3,0],
-      [9,0,4,0,6,0,0,0,5],
-      [0,7,0,3,0,0,0,1,2],
-      [1,2,0,0,0,7,4,0,0],
-      [0,4,9,2,0,6,0,0,7]
+board = [
+    [7,8,0,4,0,0,1,2,0],
+    [6,0,0,0,7,5,0,0,9],
+    [0,0,0,6,0,1,0,7,8],
+    [0,0,7,0,4,0,2,6,0],
+    [0,0,1,0,5,0,9,3,0],
+    [9,0,4,0,6,0,0,0,5],
+    [0,7,0,3,0,0,0,1,2],
+    [1,2,0,0,0,7,4,0,0],
+    [0,4,9,2,0,6,0,0,7]
     ]
 
-print_board(board)
+def main():
+    print("This is an unsolved valid sudoku puzzle.")
+    print()
+    print_board(board)
+    print()
+    print("By using backtracking we can get a solved sudoku board almost instantly!")
+    solve(board)
+    print()
+    print_board(board)
+
+main()
